@@ -58,7 +58,7 @@ Node* createNode(int data){
 Node* insert(Node* temp, int data){
 	if(temp == NULL){
 		temp = createNode(data);	
-	}else if(temp->data>data){
+	} if(temp->data>data){
 		temp->left = insert(temp->left, data);
 	}else{
 		temp->right = insert(temp->right, data);
@@ -87,18 +87,28 @@ bool searchTree(int data, Node* root){
 		return false;
 	}
 }
-int maxElement(Node* root){
-	if(root->right==NULL){
-		return root->data;
-	}else{
-		maxElement(root->right);
+void kSmall(Node* root,  int v1, int v2){
+	if(root!=NULL){
+		kSmall(root->left, v1, v2);
+		int val = root->data;
+		if(val>=v1&&val<=v2){
+			cout<<val<<" ";
+		}
+		kSmall(root->right, v1, v2);
 	}
 }
-int minElement(Node* root){
-	if(root->left==NULL){
-		return root->data;
+Node* maxElement(Node* root){
+	if(root->right==NULL){
+		return root;
 	}else{
-		minElement(root->left);
+		return maxElement(root->right);
+	}
+}
+Node* minElement(Node* root){
+	if(root->left==NULL){
+		return root;
+	}else{
+		return minElement(root->left);
 	}
 }
 int height(Node* root){
@@ -126,7 +136,7 @@ void inOrder(Node* root){
 	if(root==NULL)
 		return;
 	inOrder(root->left);
-	print(root->data);
+	cout<<root->data<<" ";
 	inOrder(root->right);
 }
 void preOrder(Node* root){
@@ -155,10 +165,77 @@ bool check(Node* root){
 			return false;
 		}
 		
-		check(root->left);
-		check(root->right);
+		return check(root->left);
+		return check(root->right);
 	}
 }
+void predSuc(Node* root, int key, Node* &pre, Node* &suc){
+	if(root==NULL){
+		return;
+	}
+	if(root->data==key){
+		if(root->left!=NULL){
+			pre = maxElement(root->left);
+		}
+		if(root->right!=NULL){
+			suc = minElement(root->right);
+		}
+		return;
+	}
+	if(root->data>key){
+		suc = root;
+		predSuc(root->left,key, pre,suc);
+	}else{
+		pre = root;
+		predSuc(root->right,key,pre,suc);
+	}
+	
+	
+	
+}
+bool remainCheck(Node* root, int remain){
+	if(root==NULL){
+		return false;
+	}else{
+		if(root->data>remain){
+			return remainCheck(root->left, remain);
+		}else if(root->data<remain){
+			return remainCheck(root->right, remain);
+		}else{
+			return true;
+		}
+	}
+}
+
+void searchPair(int val, Node* root){
+	if(root==NULL){
+		return;
+	}else if(root->data>val){
+		searchPair(val, root->left);
+	}else if(root->data<val){
+		int remain = val-root->data;
+		int myVal = root->data;
+		if(remain>myVal){
+			if(remainCheck(root->right, val)){
+				cout<<myVal<<" "<<remain;
+				return;
+			}
+		}else{
+			if(remainCheck(root->left, val)){
+				cout<<myVal<<" "<<remain;
+				return;
+			}
+		}
+		searchPair(val, root->left);
+		searchPair(val, root->right);
+		
+		 
+	}
+	 
+}
+
+
+
 int main(){
 	Node* root = NULL;
 	int num ;
@@ -168,7 +245,7 @@ int main(){
 		cin>>x;
 		root =  insert(root, x);
 	}
-	printTree(root);
+	/*printTree(root);
 	cout<<"What do you want to search ?";
 	int n;
 	cin>>n;
@@ -178,6 +255,9 @@ int main(){
 	cout<<"Height of the tree: "<<height(root)-1<<endl;
 	enqueue(root);enqueue(root->left);enqueue(root->right);
 	cout<<dequeue()<<" "<<dequeue()<<" "<<dequeue()<<endl; 
+	*/
+	
+	cout<<"Height of the tree: "<<height(root)-1<<endl;
 	levelOrder(root);
 	cout<<endl;
 	cout<<"InOrder traversal..."<<endl;
@@ -191,11 +271,51 @@ int main(){
 	cout<<endl;
 	
 	///check if the tree is binary search tree or not!
+
+
+
 	if(check(root)){
 		cout<<"Is a Binary Search Tree"<<endl;
 	}else{
 		cout<<"Is not a Binary Search Tree"<<endl;
 	}
+/*
+	while(true){
+		cout<<"Of Whom Pre And Succ";
+	int key;
+	cin>>key;
+	Node* pre = NULL;
+	Node* suc = NULL;
+	predSuc(root, key, pre, suc);
+	if(pre!=NULL){
+		cout<<pre->data<<endl;
+	}else{
+		cout<<"No Predecessor Found"<<endl;;
+	}
+	
+	if(suc!=NULL){
+		cout<<suc->data<<endl;
+	}else{
+		cout<<"No Successor Found"<<endl;
+	}
+	
+	}
+	*/
+	
+	/*
+	int v1,v2;
+	cin>>v1>>v2;
+	kSmall(root, v1,v2);
+	*/
+	
+	//Now Coming to find the pairs of two values present in the tree which makes up the sum as 
+while(true){
+		int val ;
+	cin>>val;
+	searchPair(val, root);
+}
+	
+	
 	
 	
 }

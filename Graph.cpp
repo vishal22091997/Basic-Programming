@@ -1,4 +1,5 @@
 #include<iostream>
+#include<queue>
 using namespace std;
 struct uNode{
 	int vNode;
@@ -33,6 +34,30 @@ void print(uNode* a[], int n){
 		}
 	}
 }
+void depthSearch(uNode* a[], int visit[], int x){
+	cout<<x<<endl;
+	visit[x] = 1;
+	uNode* cur = a[x];
+	while(cur!=NULL){
+		if(visit[cur->vNode]!=1){
+			depthSearch(a,visit,cur->vNode);
+		}
+		cur = cur->next;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 void depthFirst(uNode* a[],int x, int visit[]){
 	 
 		cout<<x<<" ";
@@ -46,6 +71,48 @@ void depthFirst(uNode* a[],int x, int visit[]){
 		cur = cur->next;
 	}
 		
+}
+/*
+
+
+5
+7
+0 1 2 
+0 3 2
+1 3 2
+1 2 5
+1 4 8
+2 3 5
+3 4 9
+
+
+
+
+
+*/
+int* breadth(int u, uNode* a[],int visit[], int n){
+	visit[u] = 1;
+	queue<int> q;
+	int *distances = new int[n];
+	distances[u] = 0;
+	q.push(u);
+	while(!q.empty()){
+		int curNode = q.front();
+		uNode* cur = a[curNode];
+		int myDist = distances[curNode];
+		
+		q.pop();
+		while(cur!=NULL){
+			if(visit[cur->vNode]==0){
+				distances[cur->vNode] = myDist+1;
+				visit[cur->vNode] = 1;
+				q.push(cur->vNode);	
+			}
+			cur = cur->next;
+		}
+	}
+	return distances;
+	
 }
 
 int main(){
@@ -68,10 +135,45 @@ int main(){
 	
 	print(a,n);
 	int* visit = new int[n];
-	for(int i=0;i<n;i++){
-		visit[i] = 0;
+	int count = 5;
+	/*
+	
+	while(count--){
+		cout<<"Depth First Search of which element : "<<endl;
+		int x;
+		cin>>x;
+		for(int i=0;i<n;i++){
+			visit[i] = 0;
+		}
+		if(x<n&&x>=0)
+			depthFirst(a,x,visit);
+		else
+			cout<<"Invalid x"<<endl;
 	}
-	depthFirst(a,0,visit);
+	*/
+	///now coming to breadth first search
+	count = 5;
+	cout<<"Now Time for the breadth first search";
+	while(count--){
+		cout<<"Breadth First Search of which element : "<<endl;
+		int x;
+		cin>>x;
+		for(int i=0;i<n;i++){
+			visit[i] = 0;
+		}
+		int *distances;
+		if(x<n&&x>=0)
+			distances =  breadth(x,a,visit,n);
+		else
+			cout<<"Invalid x"<<endl;
+			
+		 cout<<"Printing";
+		for(int i=0;i<n;i++){
+			cout<<distances[i]<<" ";
+		}
+			
+			
+	}
 	
 	
 	
